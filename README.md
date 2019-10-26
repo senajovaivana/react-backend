@@ -1,2 +1,3 @@
 # backend-lab
-Initial backand repository for labs.
+Initial backend repository for labs.
+ready for first commit
