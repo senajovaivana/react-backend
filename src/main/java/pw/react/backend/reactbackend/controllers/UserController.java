@@ -4,9 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import pw.react.backend.reactbackend.models.User;
-import pw.react.backend.reactbackend.repository.UserRepository;
 import pw.react.backend.reactbackend.models.UserUI;
-import pw.react.backend.reactbackend.services.LoginCheckService;
+import pw.react.backend.reactbackend.services.UserLoginCheckService;
+import pw.react.backend.reactbackend.services.UserRequestsService;
 
 import javax.validation.Valid;
 import java.sql.Date;
@@ -15,9 +15,10 @@ import java.util.*;
 @RestController
 public class UserController {
     @Autowired
-    private UserRepository repository;
+    private UserRequestsService userRequestsService;
+
     @Autowired
-    private LoginCheckService loginCheckService;
+    private UserLoginCheckService loginCheckService;
 
     @GetMapping("/inicialize")
     public String inicialize(){
@@ -33,9 +34,9 @@ public class UserController {
         loginCheckService.registerNewUserAccount(user);
     }
 
-    @GetMapping("/findall")
+    @GetMapping("/users")
     public List<UserUI> findAll(){
-        List<User> users = repository.findAll();
+        List<User> users = userRequestsService.findAllUsers();
         List<UserUI> usersUI = new ArrayList<>();
         for (User u : users) {
             usersUI.add(new UserUI(u.getId(), u.getLogin(),u.getFirstName(),u.getLastName(),u.getDateOfBirth(),u.isActive()));
@@ -43,10 +44,9 @@ public class UserController {
         return usersUI;
     }
 
-    @RequestMapping("/search/{id}")
+    @RequestMapping("/users/{id}")
     public UserUI search(@PathVariable long id) throws ResourceNotFoundException {
-        User u = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(
-                "User with the ID - " + id + " does not exist."));
+        User u = userRequestsService.findUserById(id);
         return new UserUI(u.getId(),u.getLogin(),u.getFirstName(),u.getLastName(),u.getDateOfBirth(),u.isActive());
     }
 
@@ -56,7 +56,7 @@ public class UserController {
             throw new ResourceNotFoundException(
                     "User with the login - " + login + " does not exist.");
         }
-        User u = repository.findByLogin(login);
+        User u = userRequestsService.findUserByLogin(login);
         return new UserUI(u.getId(),u.getLogin(),u.getFirstName(),u.getLastName(),u.getDateOfBirth(),u.isActive());
     }
 
@@ -74,8 +74,6 @@ public class UserController {
     }
 
     private void deleteUser(long id) throws ResourceNotFoundException {
-        User u = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(
-                "User for deleting with ID - " + id + " does not exist."));
-        repository.delete(u);
+        userRequestsService.deleteUserById(id);
     }
 }

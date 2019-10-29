@@ -1,4 +1,4 @@
-package pw.react.backend.reactbackend.services;
+package pw.react.backend.reactbackend.services.interfaces;
 
 import pw.react.backend.reactbackend.models.User;
 

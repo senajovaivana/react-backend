@@ -5,11 +5,12 @@ import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import pw.react.backend.reactbackend.models.User;
 import pw.react.backend.reactbackend.repository.UserRepository;
+import pw.react.backend.reactbackend.services.interfaces.ILoginCheckService;
 
 import javax.transaction.Transactional;
 
 @Service
-public class LoginCheckService implements ILoginCheckService {
+public class UserLoginCheckService implements ILoginCheckService {
     @Autowired
     private UserRepository repository;
 
